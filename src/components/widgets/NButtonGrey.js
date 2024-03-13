@@ -2,16 +2,16 @@ import React from 'react';
 import Button from '@mui/material/Button';
 
 // Define a custom button that extends all functionalities from MUI Button
-const NButtonPrimary = (props) => {
+const NButtonGrey = (props) => {
 
     return (
         <Button
-            color='primary'
+            color='grey'
             variant='contained'
             {...props} // Spread all received props to the MUI Button
             sx={{
                 pt: 1,
-                pb: 1.2,
+                pb: 1,
                 ...props.sx,
             }} // Apply custom styles and allow overriding via props
         >
@@ -20,4 +20,4 @@ const NButtonPrimary = (props) => {
     );
 };
 
-export default NButtonPrimary;
+export default NButtonGrey;
