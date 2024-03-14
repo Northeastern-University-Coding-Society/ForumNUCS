@@ -19,6 +19,7 @@ export default async function handler(
             return false;
         }
         const temp = await user.findOne({$or: [{email: params.email}, {username: params.username}]});
+        console.log('safety cheeck finds...', temp)
         // check exist
         return !temp || !temp.email;
     }
@@ -32,6 +33,11 @@ export default async function handler(
     const data = req.body;
 
     await dbConnect();
+
+    const loginUser = await user.findOne({email: session?.user?.email}).catch(() => {return null});
+    if (!loginUser) {
+        return res.status(403).json({error: 'not available'});
+    }
 
     /// IMPORTANT: Due to safety concern
     /// in GET: id is email
@@ -60,16 +66,10 @@ export default async function handler(
                 company: 1,
                 portrait: 1,
             })
-            return res.status(200).json({...temp});
+            return res.status(200).json(temp);
         case 'POST':
             if (!await safetyCheck({email: data.email, username: id})) {
-                return res.status(200).json({data: {}, hasError: true, error: 'user exist'});
-            }
-            if (!session || !session.user || !session.user.email) {
-                return res.status(403).json({error: 'not available'});
-            }
-            if (session.user.email !== data.email && session.user.email !== process.env.ADMIN) {
-                return res.status(403).json({error: 'not available'});
+                return res.status(400).json({data: {}, hasError: true, error: 'user exist'});
             }
             await user.create({
                 ...req.body,
@@ -78,14 +78,29 @@ export default async function handler(
             });
             break;
         case 'PUT':
-            if (!await safetyCheck({email: data.email, username: id})) {
-                return res.status(200).json({data: {}, hasError: true, error: 'user exist'});
+            if (!session || !session.user || !session.user.email) {
+                return res.status(403).json({error: 'not available'});
             }
-            await user.updateOne({
-                username: id
-            }, {
-                $set: {...req.body}
-            });
+            if (session.user.email === process.env.ADMIN) {
+                // admin update
+                await user.updateOne({
+                    username: id
+                }, {
+                    $set: {...req.body}
+                });
+            } else {
+                console.log(req.body.email, loginUser.email)
+                if (req.body.email !== loginUser.email) {
+                    // user are changing email
+                    // one more check
+                    if (!await safetyCheck({email: req.body.email, username: 'abcd'})) return res.status(403).json({error: 'not available'});
+                }
+                await user.updateOne({
+                    username: loginUser.username
+                }, {
+                    $set: {...req.body}
+                });
+            }
             break;
         case 'DELETE':
             break;

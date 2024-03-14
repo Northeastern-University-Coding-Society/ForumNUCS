@@ -42,3 +42,26 @@ export const SignupSchema = Yup.object().shape({
         .min(2, "Your company is too short")
         .max(50, "Your company is too long")
 });
+
+export const UpdateSchema = Yup.object().shape({
+    first: Yup.string()
+        .min(2, "Your name is too short")
+        .max(50, "Your name is too long")
+        .required("Required"),
+    last: Yup.string()
+        .min(2, "Your email is too short")
+        .max(50, "Your name is too long")
+        .required("Required"),
+    email: Yup.string()
+        .min(6, "Your email is too short")
+        .max(50, "Your email is too long")
+        .email("Your email is invalid")
+        .required("Required"),
+    school: Yup.string()
+        .oneOf(['Northeastern University'], 'Please choose school from the list'),
+    campus: Yup.string()
+        .oneOf(CAMPUSES, 'Please choose campus from the list'),
+    company: Yup.string()
+        .min(2, "Your company is too short")
+        .max(50, "Your company is too long")
+});

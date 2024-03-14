@@ -269,7 +269,7 @@ const SignUp = () => {
                         type="submit"
                         fullWidth
                         variant="contained"
-                        disabled={waiting}
+                        disabled={waiting || !isCreatable()}
                         sx={{mt: 3, mb: 1}}
                     >
                         Sign Up

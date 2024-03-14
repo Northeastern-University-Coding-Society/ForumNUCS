@@ -10,11 +10,17 @@ const UserContext = createContext();
 function userReducer(state, action) {
     switch (action.type) {
         case 'ADD_USER':
+            console.log('add user', state, action)
             return {...action.payload}; // Add a new user
         case 'UPDATE_USER':
-            return {...user, ...action.payload};
+            console.log('update user', state, action)
+            return {...state, ...action.payload};
         case 'GET_USER':
-            return state; // Simply return state, though typically you'd fetch and return specific user data
+            console.log('get user', state, action)
+            return state;
+        case 'CLEAR_USER':
+            console.log('clear user', state, action)
+            return {};
         default:
             throw new Error(`Unhandled action type: ${action.type}`);
     }
