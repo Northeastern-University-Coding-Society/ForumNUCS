@@ -2,9 +2,11 @@ import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials";
 import user from "@/models/user";
 import crypto from "crypto";
+import dbConnect from "@/helper/backend/database";
 
 export const authOptions = {
     // Configure one or more authentication providers
+    secret: process.env.NEXT_AUTH_SECRET,
     pages: {
         signIn: '/auth/login',
     },
@@ -29,6 +31,7 @@ export const authOptions = {
                 if (!credentials?.email || !credentials?.password) {
                     return null;
                 }
+                await dbConnect();
                 const findUser = await user.findOne({email: credentials.email});
                 console.log(credentials.email, findUser)
                 if (!findUser) {
@@ -43,6 +46,17 @@ export const authOptions = {
         }),
         // ...add more providers here
     ],
+    callbacks: {
+        // only if an oauth is used
+        async session({ session, token, user }) {
+            // Send properties to the client, like an access_token and user id from a provider.
+            session.accessToken = token.accessToken
+            session.user.id = token.id
+            session.user.email = token.email
+
+            return session
+        }
+    },
     session: {
         strategy: 'jwt',
         maxAge: 3 * 24 * 60 * 60, // 3 day

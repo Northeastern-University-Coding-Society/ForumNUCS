@@ -19,19 +19,21 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import {useEffect, useState} from "react";
 import {signIn, useSession} from "next-auth/react";
 import {useRouter} from "next/router";
+import {hasSession} from "@/helper/frontend/session-helper";
 
 const SignInSide = () => {
 
     const session = useSession();
-    console.log(session);
+
     const [show, setShow] = useState({pass: false});
     const [error, setError] = useState('');
     const { query: urlParams } = useRouter();
 
     useEffect(() => {
-        if (session && session.data?.user && session.status === 'authenticated') {
+        console.log(session);
+        if (hasSession(session)) {
             // authed
-
+            window.location.assign('/post/explore')
         }
     }, [session]);
 
