@@ -17,12 +17,16 @@ import NButtonGrey from "@/components/widgets/NButtonGrey";
 import {IconButton} from "@mui/material";
 import {useFormik} from "formik";
 import {SignupSchema} from "@/models/validations";
+import axios from "axios";
+import {signIn} from "next-auth/react";
 
 const SignUp = () => {
 
     const [show, setShow] = useState({pass: false, confPass: false});
+    const [error, setError] = useState('');
+    const [waiting, setWaiting] = useState(false);
 
-    const formik= useFormik({
+    const formik = useFormik({
         initialValues: {
             first: "",
             last: "",
@@ -39,13 +43,56 @@ const SignUp = () => {
         },
     });
 
+    const isCreatable = () => {
+        if (Object.keys(formik.errors).length) {
+            console.error(formik.errors);
+            return false
+        }
+        if (!Object.keys(formik.touched).length) {
+            console.log(formik.touched);
+            return false;
+        }
+        return true;
+    };
+
+    const handleCreateAccountWithCredentials = async () => {
+        return new Promise((resolve, reject) => {
+            if (error) setError(null);
+            const email = formik.values.email;
+            axios.post(`/api/user/${email}`, formik.values)
+                .then(res => res.data)
+                .then(data => {
+                    if (data.hasError) {
+                        reject({message: data.error, ...data})
+                    } else {
+                        resolve({email: formik.values.email, password: formik.values.password});
+                    }
+                })
+                .catch(err => {
+                    console.error(err.response.data);
+                    reject({...err.response.data});
+                })
+        })
+    };
+
     const handleSubmit = (event) => {
         event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
+        if (isCreatable()) {
+            handleCreateAccountWithCredentials()
+                .then((data) => {
+                    // console.log(data);
+                    setWaiting(false);
+                    signIn('credentials', {
+                        email: data.email, password: data.password
+                    })
+                })
+                .catch((err) => {
+                    console.error(err);
+                    setError(err.message ?? 'error');
+                    setWaiting(false);
+                })
+            setWaiting(true);
+        }
     };
 
     return (
@@ -175,7 +222,6 @@ const SignUp = () => {
                             <TextField
                                 required
                                 fullWidth
-                                name="password"
                                 label="Confirm Password"
                                 InputProps={{
                                     endAdornment: (
@@ -197,7 +243,7 @@ const SignUp = () => {
                                     ),
                                 }}
                                 id={'confPassword'}
-                                type={show.confPass === true ? "text" : "password"}value={formik.values.confPassword}
+                                type={show.confPass === true ? "text" : "password"} value={formik.values.confPassword}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                                 error={
@@ -218,17 +264,22 @@ const SignUp = () => {
                         {/*    />*/}
                         {/*</Grid>*/}
                     </Grid>
+                    <Box width={'100%'} textAlign={'center'}>{error && <Typography color="error">{error}</Typography>}</Box>
                     <Button
                         type="submit"
                         fullWidth
                         variant="contained"
+                        disabled={waiting}
                         sx={{mt: 3, mb: 1}}
                     >
                         Sign Up
                     </Button>
-                    <NButtonGrey fullWidth sx={{
-                        mb: 2
-                    }} onClick={() => {
+                    <NButtonGrey
+                        fullWidth
+                        disabled={waiting}
+                        sx={{
+                            mb: 2
+                        }} onClick={() => {
                         window.location.assign('/')
                     }}>
                         Back to Main

@@ -1,32 +1,67 @@
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
-import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
-import {createTheme} from '@mui/material/styles';
 import NContainer from "@/components/layout/NContainer";
-import {NUCS_LARGE} from "@/commons/Static";
 import Copyright from "@/components/widgets/Copyright";
 import NSideLayout from "@/components/layout/NSideLayout";
 import NButtonPrimary from "@/components/widgets/NButtonPrimary";
 import NButtonGrey from "@/components/widgets/NButtonGrey";
+import {useFormik} from "formik";
+import {LoginSchema, SignupSchema} from "@/models/validations";
+import {IconButton} from "@mui/material";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import {useEffect, useState} from "react";
+import {signIn, useSession} from "next-auth/react";
+import {useRouter} from "next/router";
 
 const SignInSide = () => {
+
+    const session = useSession();
+    console.log(session);
+    const [show, setShow] = useState({pass: false});
+    const [error, setError] = useState('');
+    const { query: urlParams } = useRouter();
+
+    useEffect(() => {
+        if (session && session.data?.user && session.status === 'authenticated') {
+            // authed
+
+        }
+    }, [session]);
+
+    useEffect(() => {
+        if (urlParams) {
+            const error = urlParams.error;
+            if (error && error === 'CredentialsSignin') {
+                setError('Your email or password is not correct');
+            }
+        }
+    }, [urlParams]);
+
+    const formik = useFormik({
+        initialValues: {
+            email: "",
+            password: "",
+        },
+        validationSchema: LoginSchema,
+        onSubmit: values => {
+            alert(JSON.stringify(values, null, 2));
+        },
+    });
+
     const handleSubmit = (event) => {
         event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
+        signIn('credentials', {
+            email: formik.values.email,
+            password: formik.values.password,
+            callbackUrl: '/account/login'
+        })
     };
 
     return (
@@ -53,38 +88,83 @@ const SignInSide = () => {
                         fullWidth
                         id="email"
                         label="Email Address"
-                        name="email"
                         autoComplete="email"
-                        autoFocus
+                        value={formik.values.email}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={
+                            formik.errors.email !== undefined && formik.touched.email
+                        }
+                        helperText={
+                            formik.errors.email && formik.touched.email
+                                ? formik.errors.email
+                                : null
+                        }
                     />
                     <TextField
-                        margin="normal"
                         required
                         fullWidth
-                        name="password"
                         label="Password"
-                        type="password"
+                        InputProps={{
+                            endAdornment: (
+                                <IconButton
+                                    size="small"
+                                    onClick={() => {
+                                        console.log("Toggle Show Pass");
+                                        let tempShow = {...show};
+                                        tempShow.pass = !show.pass;
+                                        setShow(tempShow);
+                                    }}
+                                >
+                                    {show.pass ? (
+                                        <VisibilityOffIcon color="error"/>
+                                    ) : (
+                                        <VisibilityIcon/>
+                                    )}
+                                </IconButton>
+                            ),
+                        }}
                         id="password"
-                        autoComplete="current-password"
+                        type={show.pass === true ? "text" : "password"}
+                        value={formik.values.password}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={
+                            formik.errors.password !== undefined &&
+                            formik.touched.password
+                        }
+                        helperText={
+                            formik.errors.password && formik.touched.password
+                                ? formik.errors.password
+                                : null
+                        }
                     />
                     {/*<FormControlLabel*/}
                     {/*    control={<Checkbox value="remember" color="primary"/>}*/}
                     {/*    label="Remember me"*/}
                     {/*/>*/}
-                    <NButtonPrimary fullWidth sx={{
+                    <Box width={'100%'} textAlign={'center'}>{error && <Typography color="error">{error}</Typography>}</Box>
+                    <NButtonPrimary type={'submit'} fullWidth sx={{
                         mt: 4, mb: 1
                     }}>
                         Sign In
                     </NButtonPrimary>
                     <NButtonGrey fullWidth sx={{
                         mb: 2
-                    }} onClick={() => {window.location.assign('/')}}>
+                    }} onClick={() => {
+                        window.location.assign('/')
+                    }}>
                         Back to Main
                     </NButtonGrey>
                     <Grid container>
+                        {/*<Grid item xs>*/}
+                        {/*    <Link href="#" variant="body2">*/}
+                        {/*        Forgot password?*/}
+                        {/*    </Link>*/}
+                        {/*</Grid>*/}
                         <Grid item xs>
-                            <Link href="#" variant="body2">
-                                Forgot password?
+                            <Link href="./register" variant="body2">
+                                {"Visit as a Guest"}
                             </Link>
                         </Grid>
                         <Grid item>
