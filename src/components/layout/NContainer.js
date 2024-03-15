@@ -4,6 +4,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import '../../styles/font.css';
 import {SessionProvider} from "next-auth/react";
 import {UserProvider} from "@/helper/frontend/userProvider";
+import Box from "@mui/material/Box";
 
 // To fit in the Next.js traditional Page router
 const NContainer = ({children}) => {
@@ -11,7 +12,9 @@ const NContainer = ({children}) => {
         <ThemeProvider theme={theme}>
             <CssBaseline />
             <UserProvider>
-                {children}
+                <Box sx={{width: '100%', height: '100%'}}>
+                    {children}
+                </Box>
             </UserProvider>
         </ThemeProvider>
     </SessionProvider>
