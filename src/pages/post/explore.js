@@ -29,21 +29,12 @@ const ExplorePage = () => {
 
     return <Box flexDirection={'column'} display={'flex'} alignItems={'center'}>
         <Box sx={{height: '70vh'}} flexDirection={'column'} display={'flex'}>
-            <Grid container spacing={1}>
+            <Grid container spacing={1} columnGap={1} rowGap={1}>
                 {
                     posts.map((post, index) => {
                         return (
-                            <Grid key={`post ${index}`} item height={180} xs={2} minWidth={320}>
+                            <Grid key={`post ${index}`} item xs={12} sm={2} minWidth={320}>
                                 <Stack component={Paper}>
-                                    {/*<Box width={'100%'} sx={{*/}
-                                    {/*    borderRadius: 2*/}
-                                    {/*}}>*/}
-                                    {/*    <Image src={NUCS_ABS} width={320} height={320} sx={{*/}
-                                    {/*        width:'100%',*/}
-                                    {/*        height: 'auto',*/}
-                                    {/*        borderRadius: 2*/}
-                                    {/*    }} alt={''}/>*/}
-                                    {/*</Box>*/}
                                     <Stack p={2} spacing={1}
                                            onClick={() => {
                                                window.location.assign(`/post/${post.uuid}`);
@@ -90,7 +81,7 @@ const ExplorePage = () => {
                          window.location.assign('/post/edit');
                      }}
                 >
-                    <EditIcon />
+                    <EditIcon/>
                 </Fab>
             )
         }

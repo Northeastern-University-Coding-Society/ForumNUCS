@@ -8,7 +8,7 @@ import {authOptions} from "@/pages/api/auth/[...nextauth]";
 export default async function handler(
     req, res
 ) {
-    const {filter} = req.query;
+    const {filter, search} = req.query;
     const method = req.method;
     if (method === 'GET') {
         await dbConnect();
@@ -27,8 +27,16 @@ export default async function handler(
             }, {})
             return res.status(200).json(all);
         } else {
-            const all = await post.find({}, {})
-            return res.status(200).json(all);
+            if (search) {
+                const regex = new RegExp(search, 'i');
+                const all = await post.find({
+                    [filter]: regex
+                }, {})
+                return res.status(200).json(all);
+            } else {
+                const all = await post.find({}, {})
+                return res.status(200).json(all);
+            }
         }
     }
     res.status(500).send(MEG_NOT_SUPPORTED);

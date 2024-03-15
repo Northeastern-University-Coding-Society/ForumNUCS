@@ -38,7 +38,9 @@ function Header() {
                 >
                     {title}
                 </Typography>
-                <IconButton>
+                <IconButton onClick={() => {
+                    window.location.assign('/post/search')
+                }}>
                     <SearchIcon/>
                 </IconButton>
                 {
