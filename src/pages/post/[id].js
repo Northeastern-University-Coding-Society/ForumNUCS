@@ -35,9 +35,14 @@ const Viewer = () => {
                 .then((data) => {
                     setContent(data);
                     setMarkdown(data.content);
-                }).catch((err) => {
-                console.error(err);
-            })
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+            axios.post(`/api/view/${id}`)
+                .catch((err) => {
+                    console.error(err);
+                })
         }
     }, [id]);
 
@@ -103,7 +108,10 @@ const Viewer = () => {
             <Typography variant={'h1'}>{content.title}</Typography>
             <Stack flexDirection={'row'} direction={'row'} p={1} pb={0} spacing={4}>
                 <Stack flexDirection={'row'} direction={'row'} p={1} pb={0} spacing={4}>
-                    <Typography sx={{textDecoration: 'underline', cursor: 'pointer'}}>{`${content.author} ${content && user && content.authorId === user.username ? '(me)' : ''}`}</Typography>
+                    <Typography sx={{
+                        textDecoration: 'underline',
+                        cursor: 'pointer'
+                    }}>{`${content.author} ${content && user && content.authorId === user.username ? '(me)' : ''}`}</Typography>
                     <Typography>{new Date(content.date).toLocaleDateString()}</Typography>
                 </Stack>
                 {content && user && content.authorId === user.username ? <></> :
@@ -133,11 +141,11 @@ const Viewer = () => {
             </Fab>
             {
                 (content.author && content && user && content.authorId === user.username)
-                 && (
+                && (
                     <Fab color={'secondary'} size={'large'}
                          aria-label="like"
                          onClick={() => {
-                            window.location.assign(`/post/edit/${content.uuid}`)
+                             window.location.assign(`/post/edit/${content.uuid}`)
                          }}
                     >
                         <EditIcon/>
