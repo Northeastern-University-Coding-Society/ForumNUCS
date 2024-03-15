@@ -20,6 +20,7 @@ export default async function handler(
             const count = await view.countDocuments({
                 uuid: id,
             })
+            break;
         case 'POST':
             const thePost = await post.findOne({
                 uuid: id,
@@ -28,7 +29,8 @@ export default async function handler(
                 uuid: id,
                 author: thePost.authorId,
                 by: session?.user?.email ?? 'guest',
-                date: new Date(Date.now())
+                date: new Date(Date.now()),
+                extra: {...thePost}
             });
             return res.status(200).json({});
         default:

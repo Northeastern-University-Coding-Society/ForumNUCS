@@ -14,6 +14,7 @@ import {useState} from "react";
 import {AccountUpdate} from "@/components/pages/account";
 import Follower from "@/components/pages/follow";
 import MyPost from "@/components/pages/mypost";
+import History from "@/components/pages/history";
 
 const features = [
     {
@@ -65,6 +66,8 @@ const MePage = () => {
                 }}/>;
             case 'post':
                 return <MyPost/>;
+            case 'history':
+                return <History/>;
             default:
                 return <AccountUpdate/>;
         }

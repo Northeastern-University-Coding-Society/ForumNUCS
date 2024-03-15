@@ -9,7 +9,7 @@ import user from "@/models/user";
 export default async function handler(
     req, res
 ) {
-    const {id} = req.query;
+    const {id, target} = req.query;
     const method = req.method;
 
     await dbConnect();
@@ -25,10 +25,17 @@ export default async function handler(
             const me = await user.findOne({
                 email: session.user.email
             });
-            const count = await view.countDocuments({
-                author: me.username,
-            })
-            return res.status(200).json({count});
+            if (!target || target === 'author') {
+                const count = await view.countDocuments({
+                    author: me.username,
+                })
+                return res.status(200).json({count});
+            } else {
+                const count = await view.find({
+                    by: me.username,
+                })
+                return res.status(200).json(count);
+            }
         default:
             break;
     }
