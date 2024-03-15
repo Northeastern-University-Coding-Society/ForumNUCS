@@ -51,7 +51,7 @@ const ExplorePage = () => {
                                                     {
                                                         post.tags.map((tag, index) => {
                                                             return (
-                                                                <Grid item xs={4} width={'100%'}>
+                                                                <Grid item key={`tag ${index}`} xs={4} width={'100%'}>
                                                                     <Chip label={`${tag}`} key={`chip ${index}`}/>
                                                                 </Grid>
                                                             )
