@@ -29,7 +29,7 @@ const ExplorePage = () => {
 
     return <Box flexDirection={'column'} display={'flex'} alignItems={'center'}>
         <Box sx={{height: '70vh'}} flexDirection={'column'} display={'flex'}>
-            <Grid container>
+            <Grid container spacing={1}>
                 {
                     posts.map((post, index) => {
                         return (
@@ -52,7 +52,7 @@ const ExplorePage = () => {
                                         <Typography variant={'h5'} fontWeight={'bold'}>{post.title}</Typography>
                                         <Typography>By: {post.author}</Typography>
                                         <Typography>Created at: {new Date(post.date).toLocaleDateString()}</Typography>
-                                        <Typography>{(post.content.length / 200).toFixed(0) <= 1 ? 1 : (post.content.length / 200).toFixed(0)} minute(s)
+                                        <Typography>{(post.content.length / 200).toFixed(0) <= 1 ? 1 : (post.content.length / 800).toFixed(0)} minute(s)
                                             read</Typography>
                                         {
                                             post.tags && (

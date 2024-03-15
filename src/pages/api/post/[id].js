@@ -45,7 +45,7 @@ export default async function handler(
             }
             const currentUser = await user.findOne({email: session.user.email});
             await post.updateOne(
-                {$and: [{uuid: id}, {author: currentUser.username}]},
+                {$and: [{uuid: id}, {authorId: currentUser.username}]},
                 {...req.body}
             )
             return res.status(200).json({});

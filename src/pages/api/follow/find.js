@@ -9,8 +9,10 @@ export default async function handler(
     if (method === 'POST') {
         await dbConnect();
         const all = await follow.findOne({
-            follower: req.body.from,
-            followee: req.body.to
+            $and: [{follower: req.body.from}, {followee: req.body.to}]
+                // follower: req.body.from,
+                // followee: req.body.to
+
         })
         return res.status(200).json(all ?? {});
     }

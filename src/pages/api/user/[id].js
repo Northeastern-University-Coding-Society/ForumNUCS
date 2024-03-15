@@ -34,8 +34,10 @@ export default async function handler(
 
     await dbConnect();
 
-    const loginUser = await user.findOne({email: session?.user?.email}).catch(() => {return null});
-    if (!loginUser) {
+    const loginUser = await user.findOne({email: session?.user?.email}).catch(() => {
+        return null
+    });
+    if (method !== 'POST' && !loginUser) {
         return res.status(403).json({error: 'not available'});
     }
 
@@ -93,7 +95,10 @@ export default async function handler(
                 if (req.body.email !== loginUser.email) {
                     // user are changing email
                     // one more check
-                    if (!await safetyCheck({email: req.body.email, username: 'abcd'})) return res.status(403).json({error: 'not available'});
+                    if (!await safetyCheck({
+                        email: req.body.email,
+                        username: 'abcd'
+                    })) return res.status(403).json({error: 'not available'});
                 }
                 await user.updateOne({
                     username: loginUser.username

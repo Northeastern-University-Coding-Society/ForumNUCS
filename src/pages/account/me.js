@@ -12,6 +12,8 @@ import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import PeopleIcon from '@mui/icons-material/People';
 import {useState} from "react";
 import {AccountUpdate} from "@/components/pages/account";
+import Follower from "@/components/pages/follow";
+import MyPost from "@/components/pages/mypost";
 
 const features = [
     {
@@ -51,6 +53,18 @@ const MePage = () => {
 
     const showPanel = () => {
         switch (feature) {
+            case 'account':
+                return <AccountUpdate/>;
+            case 'follow':
+                return <Follower props={{
+                    target: 'from'
+                }}/>;
+            case 'follower':
+                return <Follower props={{
+                    target: 'to'
+                }}/>;
+            case 'post':
+                return <MyPost/>;
             default:
                 return <AccountUpdate/>;
         }
@@ -63,7 +77,7 @@ const MePage = () => {
                 {
                     features.map((feature, idx) => {
                         return <ListItem key={`feature ${idx}`}>
-                            <ListItemButton>
+                            <ListItemButton onClick={() => {setFeature(feature.label)}}>
                                 <ListItemIcon>
                                     {feature.icon}
                                 </ListItemIcon>

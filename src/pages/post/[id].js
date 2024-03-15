@@ -64,7 +64,9 @@ const Viewer = () => {
                 .then((data) => {
                     console.log(data);
                     if (data.follower && data.follower === user.username) {
-
+                        setFollowed(true);
+                    } else {
+                        setFollowed(false);
                     }
                 }).catch((err) => {
                 console.error(err);
@@ -72,17 +74,42 @@ const Viewer = () => {
         }
     }, [content, user]);
 
+    const follow = () => {
+        if (content && user.username) {
+            axios.post(`/api/follow/${content.authorId}`, {
+                from: user.username,
+                to: content.authorId
+            })
+                .then(res => res.data)
+                .then((data) => {
+                    console.log(data);
+                    setFollowed(!followed);
+                }).catch((err) => {
+                console.error(err);
+            })
+        }
+    }
+
+    const like = () => {
+
+    }
+
+    const save = () => {
+
+    }
+
     return <Box width={'100%'} height={'100%'} px={8}>
         <Stack>
             <Typography variant={'h1'}>{content.title}</Typography>
             <Stack flexDirection={'row'} direction={'row'} p={1} pb={0} spacing={4}>
                 <Stack flexDirection={'row'} direction={'row'} p={1} pb={0} spacing={4}>
-                    <Typography>{content.author}</Typography>
+                    <Typography sx={{textDecoration: 'underline', cursor: 'pointer'}}>{`${content.author} ${content && user && content.authorId === user.username ? '(me)' : ''}`}</Typography>
                     <Typography>{new Date(content.date).toLocaleDateString()}</Typography>
                 </Stack>
-                {followed
-                    ? <Button color={'grey'}>Unfollow</Button>
-                    : <Button>Follow</Button>}
+                {content && user && content.authorId === user.username ? <></> :
+                    followed
+                        ? <Button onClick={follow} color={'grey'}>Unfollow</Button>
+                        : <Button onClick={follow}>Follow</Button>}
             </Stack>
             <Divider></Divider>
             <Markdown>{markdown}</Markdown>
@@ -91,7 +118,7 @@ const Viewer = () => {
             <Fab color={'primary'} size={'large'}
                  aria-label="save"
                  onClick={() => {
-                     window.location.assign('/post/edit');
+
                  }}
             >
                 <GradeIcon/>
@@ -99,11 +126,24 @@ const Viewer = () => {
             <Fab color={'secondary'} size={'large'}
                  aria-label="like"
                  onClick={() => {
-                     window.location.assign('/post/edit');
+
                  }}
             >
                 <ThumbUpIcon/>
             </Fab>
+            {
+                (content.author && content && user && content.authorId === user.username)
+                 && (
+                    <Fab color={'secondary'} size={'large'}
+                         aria-label="like"
+                         onClick={() => {
+                            window.location.assign(`/post/edit/${content.uuid}`)
+                         }}
+                    >
+                        <EditIcon/>
+                    </Fab>
+                )
+            }
         </Stack>
     </Box>
 }
