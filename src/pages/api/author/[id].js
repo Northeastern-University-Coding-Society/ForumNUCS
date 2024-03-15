@@ -15,13 +15,10 @@ export default async function handler(
 
     await dbConnect();
 
-    /// IMPORTANT: Due to safety concern
-    /// in GET: id is email
-    /// in ELSE: id is username
     switch (method) {
         case 'GET':
             const temp = await user.findOne({
-                email: id
+                username: id
             }, {
                 first: 1,
                 last: 1,
