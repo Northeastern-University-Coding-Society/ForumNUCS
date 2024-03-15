@@ -29,11 +29,11 @@ const ExplorePage = () => {
 
     return <Box flexDirection={'column'} display={'flex'} alignItems={'center'}>
         <Box sx={{height: '70vh'}} flexDirection={'column'} display={'flex'}>
-            <Grid container spacing={1} columnGap={1} rowGap={1}>
+            <Grid container spacing={1} columnGap={1} rowGap={1} px={2}>
                 {
                     posts.map((post, index) => {
                         return (
-                            <Grid key={`post ${index}`} item xs={12} sm={2} minWidth={320}>
+                            <Grid key={`post ${index}`} item xs={12} sm={'auto'} minWidth={240}>
                                 <Stack component={Paper}>
                                     <Stack p={2} spacing={1}
                                            onClick={() => {
@@ -75,7 +75,7 @@ const ExplorePage = () => {
                 //         window.location.assign('/post/edit');
                 //     }}>New Post</NButtonPrimary>
                 // </Box>
-                <Fab color={'primary'} size={'large'}
+                <Fab sx={{ position: 'fixed', bottom: '64px', right: '64px' }} color={'primary'} size={'large'}
                      aria-label="add new post"
                      onClick={() => {
                          window.location.assign('/post/edit');
