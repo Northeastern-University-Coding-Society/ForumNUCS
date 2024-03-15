@@ -27,6 +27,8 @@ const Viewer = () => {
     const [content, setContent] = useState({});
 
     const [followed, setFollowed] = useState(false)
+    const [liked, setLiked] = useState(false)
+    const [saved, setSaved] = useState(false)
 
     useEffect(() => {
         if (id) {
@@ -35,6 +37,22 @@ const Viewer = () => {
                 .then((data) => {
                     setContent(data);
                     setMarkdown(data.content);
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+            axios.get(`/api/like/${id}`)
+                .then(res => res.data)
+                .then((data) => {
+                    setLiked(data && data.by);
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+            axios.get(`/api/save/${id}`)
+                .then(res => res.data)
+                .then((data) => {
+                    setSaved(data && data.by);
                 })
                 .catch((err) => {
                     console.error(err);
@@ -96,11 +114,23 @@ const Viewer = () => {
     }
 
     const like = () => {
-
+        axios.post(`/api/like/${id}`)
+            .then(() => {
+                setLiked(!liked);
+            })
+            .catch((err) => {
+                console.error(err);
+            })
     }
 
     const save = () => {
-
+        axios.post(`/api/save/${id}`)
+            .then(() => {
+                setSaved(!saved);
+            })
+            .catch((err) => {
+                console.error(err);
+            })
     }
 
     return <Box width={'100%'} height={'100%'} px={8}>
@@ -123,21 +153,17 @@ const Viewer = () => {
             <Markdown>{markdown}</Markdown>
         </Stack>
         <Stack direction={'row'} spacing={2} mt={8}>
-            <Fab color={'primary'} size={'large'}
+            <Fab color={liked ? 'grey' : 'primary'} size={'large'}
                  aria-label="save"
-                 onClick={() => {
-
-                 }}
-            >
-                <GradeIcon/>
-            </Fab>
-            <Fab color={'secondary'} size={'large'}
-                 aria-label="like"
-                 onClick={() => {
-
-                 }}
+                 onClick={like}
             >
                 <ThumbUpIcon/>
+            </Fab>
+            <Fab color={saved ? 'grey' : 'secondary'} size={'large'}
+                 aria-label="like"
+                 onClick={save}
+            >
+                <GradeIcon/>
             </Fab>
             {
                 (content.author && content && user && content.authorId === user.username)

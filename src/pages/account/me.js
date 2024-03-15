@@ -15,6 +15,8 @@ import {AccountUpdate} from "@/components/pages/account";
 import Follower from "@/components/pages/follow";
 import MyPost from "@/components/pages/mypost";
 import History from "@/components/pages/history";
+import Like from "@/components/pages/like";
+import Save from "@/components/pages/save";
 
 const features = [
     {
@@ -68,6 +70,10 @@ const MePage = () => {
                 return <MyPost/>;
             case 'history':
                 return <History/>;
+            case 'save':
+                return <Save/>;
+            case 'like':
+                return <Like/>;
             default:
                 return <AccountUpdate/>;
         }

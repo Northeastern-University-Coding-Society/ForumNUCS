@@ -4,6 +4,7 @@ import {getServerSession} from "next-auth";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
 import post from "@/models/post";
 import like from "@/models/like";
+import user from "@/models/user";
 
 export default async function handler(
     req, res
@@ -15,23 +16,43 @@ export default async function handler(
 
     const session = await getServerSession(req, res, authOptions);
 
+    if (!session?.user?.email) {
+        return res.status(403).json({error: 'not available'});
+    }
+
+    const me = await user.findOne({
+        email: session.user.email
+    });
+
     switch (method) {
         case 'GET':
-            const count = await like.countDocuments({
+            const mine = await like.findOne({
                 uuid: id,
-            })
-            break;
+                by: me.username
+            });
+            return res.status(200).json(mine);
         case 'POST':
             const thePost = await post.findOne({
                 uuid: id,
             });
-            await like.create({
+            const ifLiked = await like.findOne({
                 uuid: id,
-                author: thePost.authorId,
-                by: session?.user?.email ?? 'guest',
-                date: new Date(Date.now()),
-                extra: {...thePost}
-            });
+                by:me.username
+            })
+            if (ifLiked && ifLiked.by) {
+                await like.deleteOne({
+                    uuid: id,
+                    by:me.username
+                });
+            } else {
+                await like.create({
+                    uuid: id,
+                    author: thePost.authorId,
+                    by: me.username,
+                    date: new Date(Date.now()),
+                    extra: {...thePost}
+                });
+            }
             return res.status(200).json({});
         default:
             break;
