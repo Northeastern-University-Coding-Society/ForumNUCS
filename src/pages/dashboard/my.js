@@ -20,6 +20,8 @@ const Dashboard = () => {
     const [posts, setPosts] = useState();
     const [follows, setFollows] = useState();
     const [views, setViews] = useState();
+    const [likes, setLikes] = useState();
+    const [saves, setSaves] = useState();
 
     const user = useUser();
 
@@ -39,6 +41,22 @@ const Dashboard = () => {
             .then(res => res.data)
             .then(data => {
                 setViews(data);
+            })
+            .catch(() => {
+
+            })
+        axios.get(`/api/save/mine`)
+            .then(res => res.data)
+            .then(data => {
+                setSaves(data);
+            })
+            .catch(() => {
+
+            })
+        axios.get(`/api/like/mine`)
+            .then(res => res.data)
+            .then(data => {
+                setLikes(data);
             })
             .catch(() => {
 
@@ -66,12 +84,20 @@ const Dashboard = () => {
                 <DashboardCard props={{title: 'Posts Viewed', value: views.count}}/>
             </Grid>
         )}
-        <Grid item xs={'auto'}>
-            <DashboardCard props={{title: 'Posts Liked', value: 'haha'}}/>
-        </Grid>
-        <Grid item xs={'auto'}>
-            <DashboardCard props={{title: 'Posts Saved', value: 'haha'}}/>
-        </Grid>
+        {
+            likes && (
+                <Grid item xs={'auto'}>
+                    <DashboardCard props={{title: 'Posts Liked', value: likes.count}}/>
+                </Grid>
+            )
+        }
+        {
+            saves && (
+                <Grid item xs={'auto'}>
+                    <DashboardCard props={{title: 'Posts Saved', value: saves.count}}/>
+                </Grid>
+            )
+        }
         {
             follows && (
                 <Grid item xs={'auto'}>
