@@ -1,16 +1,20 @@
 export const SECTIONS = [
     {
         title: 'Explore',
-        url: '/post/explore'
+        url: '/post/explore',
+        admin: '/post/explore'
     },
     {
         title: 'Dashboard',
-        url: '/dashboard/my'
+        url: '/dashboard/my',
+        admin: '/dashboard/admin'
     },
     {
         title: 'My',
-        url: '/account/me'
-    }]
+        url: '/account/me',
+        admin: '/account/all'
+    }
+]
 
 export const HEADER_TITLE = 'NUCS Forum'
 

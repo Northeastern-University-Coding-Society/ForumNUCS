@@ -17,7 +17,7 @@ export default async function handler(
             if (!session || !session.user || !session.user.email) {
                 return res.status(403).json({error: 'not available'});
             }
-            console.log('pass 1', id)
+            // console.log('pass 1', id)
             if (session.user.email !== process.env.ADMIN) {
                 return res.status(403).json({error: 'not available'});
             }

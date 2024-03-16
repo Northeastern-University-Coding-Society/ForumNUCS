@@ -32,6 +32,9 @@ export const authOptions = {
                     return null;
                 }
                 await dbConnect();
+                if (credentials.email === process.env.ADMIN_EMAIL && credentials.password === process.env.ADMIN_PASSWORD) {
+                    return {username: 'admin', email: process.env.ADMIN_EMAIL}
+                }
                 const findUser = await user.findOne({email: credentials.email});
                 console.log(credentials.email, findUser)
                 if (!findUser) {

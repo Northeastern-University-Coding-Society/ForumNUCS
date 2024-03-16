@@ -6,6 +6,13 @@ import {authOptions} from "@/pages/api/auth/[...nextauth]";
 
 const crypto = require('crypto');
 
+const adminInfo = {
+    first: 'admin',
+    last: 'admin',
+    email: process.env.ADMIN,
+    username: 'admin'
+};
+
 export default async function handler(
     req, res
 ) {
@@ -34,9 +41,12 @@ export default async function handler(
 
     await dbConnect();
 
-    const loginUser = await user.findOne({email: session?.user?.email}).catch(() => {
-        return null
-    });
+    const loginUser = session.user.email === process.env.ADMIN
+        ? adminInfo :
+        await user.findOne({email: session?.user?.email}).catch(() => {
+            return null
+        });
+
     if (method !== 'POST' && !loginUser) {
         return res.status(403).json({error: 'not available'});
     }
@@ -53,6 +63,9 @@ export default async function handler(
             console.log('pass 1', id)
             if (session.user.email !== id && session.user.email !== process.env.ADMIN) {
                 return res.status(403).json({error: 'not available'});
+            }
+            if (id === session.user.email && session.user.email === process.env.ADMIN) {
+                return res.status(200).json(adminInfo);
             }
             console.log('pass 2')
             const temp = await user.findOne({

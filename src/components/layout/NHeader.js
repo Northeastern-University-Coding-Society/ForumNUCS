@@ -11,11 +11,13 @@ import Image from "next/image";
 import {NUCS_ABS} from "@/commons/Static";
 import Box from "@mui/material/Box";
 import {HEADER_TITLE, SECTIONS} from "@/commons/Constants";
+import {useUser} from "@/helper/frontend/userProvider";
 
 const defaultProps = {sections: SECTIONS, title: HEADER_TITLE};
 
 function Header() {
     const session = useSession();
+    const {state: user, dispatch} = useUser();
     const {sections, title} = defaultProps;
 
     return (
@@ -76,8 +78,12 @@ function Header() {
                         noWrap
                         key={section.title}
                         variant="body2"
-                        href={section.url}
-                        sx={{p: 1, flexShrink: 0}}
+                        onClick={() => {
+                            window.location.assign(
+                                user?.username === 'admin' ? section.admin : section.url
+                            )
+                        }}
+                        sx={{p: 1, flexShrink: 0, cursor: 'pointer'}}
                     >
                         {section.title}
                     </Link>
