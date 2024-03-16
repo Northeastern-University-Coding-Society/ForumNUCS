@@ -5,6 +5,13 @@ import user from "@/models/user";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
 
+const adminInfo = {
+    first: 'admin',
+    last: 'admin',
+    email: process.env.ADMIN,
+    username: 'admin'
+};
+
 export default async function handler(
     req, res
 ) {
@@ -14,13 +21,19 @@ export default async function handler(
         await dbConnect();
 
         const session = await getServerSession(req, res, authOptions);
-        const loginUser = await user.findOne({email: session?.user?.email}).catch(() => {
-            return null
-        });
+        const loginUser = session?.user?.email === process.env.ADMIN
+            ? adminInfo :
+            await user.findOne({email: session?.user?.email}).catch(() => {
+                return null
+            });
 
         if (filter === 'mine') {
             if (!loginUser) {
                 return res.status(403).json({error: 'not available'});
+            }
+            if (loginUser.username === 'admin') {
+                const all = await post.find({}, {})
+                return res.status(200).json(all);
             }
             const all = await post.find({
                 authorId: loginUser.username

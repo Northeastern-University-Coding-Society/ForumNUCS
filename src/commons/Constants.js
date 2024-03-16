@@ -7,7 +7,7 @@ export const SECTIONS = [
     {
         title: 'Dashboard',
         url: '/dashboard/my',
-        admin: '/dashboard/admin'
+        admin: '/dashboard/my'
     },
     {
         title: 'My',

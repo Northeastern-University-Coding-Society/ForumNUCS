@@ -4,6 +4,8 @@ import {getServerSession} from "next-auth";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
 import user from "@/models/user";
 import like from "@/models/like";
+import view from "@/models/view";
+import save from "@/models/save";
 
 export default async function handler(
     req, res
@@ -21,6 +23,10 @@ export default async function handler(
 
     switch (method) {
         case 'GET':
+            if (session.user.email === process.env.ADMIN) {
+                const count = await like.countDocuments({});
+                return res.status(200).json({count});
+            }
             const me = await user.findOne({
                 email: session.user.email
             });

@@ -23,20 +23,26 @@ const Dashboard = () => {
     const [likes, setLikes] = useState();
     const [saves, setSaves] = useState();
 
-    const user = useUser();
+    const {state: user, dispatch} = useUser();
 
     // useEffect(() => {
     // }, [user]);
 
     useEffect(() => {
-        axios.get(`/api/follow/mine?target=to`)
-            .then(res => res.data)
-            .then(data => {
-                setFollows(data);
-            })
-            .catch(() => {
+        if (!user || user.username === 'guest') {
+            return;
+        }
+        console.log(user, user.username === 'admin')
+        if (user.username !== 'admin') {
+            axios.get(`/api/follow/mine?target=to`)
+                .then(res => res.data)
+                .then(data => {
+                    setFollows(data);
+                })
+                .catch(() => {
 
-            })
+                })
+        }
         axios.get(`/api/view/mine`)
             .then(res => res.data)
             .then(data => {
@@ -69,7 +75,7 @@ const Dashboard = () => {
             .catch((err) => {
                 console.error(err)
             });
-    }, []);
+    }, [user]);
 
     return <Grid container p={4} rowGap={2} columnGap={2} flexDirection={'row'}>
         {
