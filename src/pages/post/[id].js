@@ -172,18 +172,26 @@ const Viewer = () => {
         {
             hasSession(session) && (
                 <Stack direction={'row'} spacing={2} mt={8}>
-                    <Fab color={liked ? 'grey' : 'primary'} size={'large'}
-                         aria-label="save"
-                         onClick={like}
-                    >
-                        <ThumbUpIcon/>
-                    </Fab>
-                    <Fab color={saved ? 'grey' : 'secondary'} size={'large'}
-                         aria-label="like"
-                         onClick={save}
-                    >
-                        <GradeIcon/>
-                    </Fab>
+                    {
+                        user.username !== 'admin' && (
+                            <Fab color={liked ? 'grey' : 'primary'} size={'large'}
+                                 aria-label="save"
+                                 onClick={like}
+                            >
+                                <ThumbUpIcon/>
+                            </Fab>
+                        )
+                    }
+                    {
+                        user.username !== 'admin' && (
+                            <Fab color={saved ? 'grey' : 'secondary'} size={'large'}
+                                 aria-label="like"
+                                 onClick={save}
+                            >
+                                <GradeIcon/>
+                            </Fab>
+                        )
+                    }
                     {
                         (content.author && content && user && content.authorId === user.username)
                         && (
@@ -210,12 +218,16 @@ const Viewer = () => {
                             <DeleteIcon/>
                         </Fab>
                     }
-                    <Fab color={saved ? 'grey' : 'primary'} size={'large'}
-                         aria-label="like"
-                         onClick={save}
-                    >
-                        <CommentIcon/>
-                    </Fab>
+                    {
+                        user.username !== 'admin' && (
+                            <Fab color={saved ? 'grey' : 'primary'} size={'large'}
+                                 aria-label="like"
+                                 onClick={save}
+                            >
+                                <CommentIcon/>
+                            </Fab>
+                        )
+                    }
                 </Stack>
             )
         }
