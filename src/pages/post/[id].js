@@ -13,6 +13,7 @@ import Button from "@mui/material/Button";
 import EditIcon from "@mui/icons-material/Edit";
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import GradeIcon from '@mui/icons-material/Grade';
+import {hasSession} from "@/helper/frontend/session-helper";
 
 const Viewer = () => {
 
@@ -144,7 +145,7 @@ const Viewer = () => {
                     }}>{`${content.author} ${content && user && content.authorId === user.username ? '(me)' : ''}`}</Typography>
                     <Typography>{new Date(content.date).toLocaleDateString()}</Typography>
                 </Stack>
-                {content && user && content.authorId === user.username ? <></> :
+                {!hasSession(session) || (content && user && content.authorId === user.username) ? <></> :
                     followed
                         ? <Button onClick={follow} color={'grey'}>Unfollow</Button>
                         : <Button onClick={follow}>Follow</Button>}
@@ -152,33 +153,37 @@ const Viewer = () => {
             <Divider></Divider>
             <Markdown>{markdown}</Markdown>
         </Stack>
-        <Stack direction={'row'} spacing={2} mt={8}>
-            <Fab color={liked ? 'grey' : 'primary'} size={'large'}
-                 aria-label="save"
-                 onClick={like}
-            >
-                <ThumbUpIcon/>
-            </Fab>
-            <Fab color={saved ? 'grey' : 'secondary'} size={'large'}
-                 aria-label="like"
-                 onClick={save}
-            >
-                <GradeIcon/>
-            </Fab>
-            {
-                (content.author && content && user && content.authorId === user.username)
-                && (
-                    <Fab color={'secondary'} size={'large'}
-                         aria-label="like"
-                         onClick={() => {
-                             window.location.assign(`/post/edit/${content.uuid}`)
-                         }}
+        {
+            hasSession(session) && (
+                <Stack direction={'row'} spacing={2} mt={8}>
+                    <Fab color={liked ? 'grey' : 'primary'} size={'large'}
+                         aria-label="save"
+                         onClick={like}
                     >
-                        <EditIcon/>
+                        <ThumbUpIcon/>
                     </Fab>
-                )
-            }
-        </Stack>
+                    <Fab color={saved ? 'grey' : 'secondary'} size={'large'}
+                         aria-label="like"
+                         onClick={save}
+                    >
+                        <GradeIcon/>
+                    </Fab>
+                    {
+                        (content.author && content && user && content.authorId === user.username)
+                        && (
+                            <Fab color={'secondary'} size={'large'}
+                                 aria-label="like"
+                                 onClick={() => {
+                                     window.location.assign(`/post/edit/${content.uuid}`)
+                                 }}
+                            >
+                                <EditIcon/>
+                            </Fab>
+                        )
+                    }
+                </Stack>
+            )
+        }
     </Box>
 }
 

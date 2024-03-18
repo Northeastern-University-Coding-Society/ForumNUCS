@@ -165,7 +165,7 @@ const SignInSide = () => {
                         {/*    </Link>*/}
                         {/*</Grid>*/}
                         <Grid item xs>
-                            <Link href="./register" variant="body2">
+                            <Link href="/post/explore" variant="body2">
                                 {"Visit as a Guest"}
                             </Link>
                         </Grid>

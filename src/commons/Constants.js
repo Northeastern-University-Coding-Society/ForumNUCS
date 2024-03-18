@@ -2,17 +2,20 @@ export const SECTIONS = [
     {
         title: 'Explore',
         url: '/post/explore',
-        admin: '/post/explore'
+        admin: '/post/explore',
+        needLogin: false,
     },
     {
         title: 'Dashboard',
         url: '/dashboard/my',
-        admin: '/dashboard/my'
+        admin: '/dashboard/my',
+        needLogin: true,
     },
     {
         title: 'My',
         url: '/account/me',
-        admin: '/account/all'
+        admin: '/account/all',
+        needLogin: true,
     }
 ]
 

@@ -72,8 +72,12 @@ function Header() {
                 variant="dense"
                 sx={{justifyContent: 'start', overflowX: 'auto', borderBottom: 1, borderColor: 'divider'}}
             >
-                {sections.map((section) => (
-                    <Link
+                {sections.map((section) => {
+                    if (!hasSession(session) && section.needLogin) {
+                        return null;
+                    }
+
+                    return <Link
                         color="inherit"
                         noWrap
                         key={section.title}
@@ -87,7 +91,7 @@ function Header() {
                     >
                         {section.title}
                     </Link>
-                ))}
+                })}
             </Toolbar>
             <br/>
         </React.Fragment>
