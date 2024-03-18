@@ -5,6 +5,7 @@ const CommentSchema = new mongoose.Schema({
         from: String,
         to: String,
         parent: String, // if not exist, make it ''
+        content: String,
         date: Date,
         extra: {type: Object, required: false}
     }, {collection: "comment"}
