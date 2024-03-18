@@ -2,24 +2,31 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
-import {MenuItem} from "@mui/material";
+import {IconButton, MenuItem, Modal, Stack} from "@mui/material";
 import NButtonGrey from "@/components/widgets/NButtonGrey";
 import * as React from "react";
 import {useEffect, useState} from "react";
 import {useFormik} from "formik";
-import {UpdateSchema} from "@/models/validations";
+import {resetPassSchema, UpdateSchema} from "@/models/validations";
 import NButtonPrimary from "@/components/widgets/NButtonPrimary";
 import {useUser} from "@/helper/frontend/userProvider";
 import {CAMPUSES} from "@/commons/Constants";
 import axios from "axios";
 import {signOut} from "next-auth/react";
+import {modal} from "@/commons/Styles";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import Button from "@mui/material/Button";
 
 export const AccountUpdate = () => {
 
     const {state: user, dispatch} = useUser();
     const [show, setShow] = useState({pass: false, confPass: false});
     const [error, setError] = useState('');
+    const [modalError, setModalError] = useState('');
     const [waiting, setWaiting] = useState(false);
+
+    const [controller, setController] = useState(false);
 
     const isCreatable = () => {
         if (Object.keys(formik.errors).length) {
@@ -28,6 +35,31 @@ export const AccountUpdate = () => {
         }
         return true;
     };
+
+    const resetPass = (event) => {
+        event.preventDefault();
+        if (Object.keys(formikReset.errors).length) {
+            console.error(formikReset.errors);
+            return false
+        }
+        if (!Object.keys(formikReset.touched).length) {
+            console.log(formikReset.touched);
+            return false;
+        }
+        const username = user.username;
+        axios.put(`/api/user/${username}`, formikReset.values)
+            .then(res => res.data)
+            .then(data => {
+                setWaiting(false);
+                signOut({
+                    callbackUrl: '/account/login'
+                })
+            })
+            .catch(err => {
+                console.error(err.response.data);
+                setModalError(err.response.data.error)
+            })
+    }
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -53,7 +85,7 @@ export const AccountUpdate = () => {
                 })
                 .catch(err => {
                     console.error(err.response.data);
-                    setError(err.response.data.error)
+                    setError(err.response.data.error);
                 })
         }
     };
@@ -69,6 +101,18 @@ export const AccountUpdate = () => {
             company: user ? user.company : ""
         },
         validationSchema: UpdateSchema,
+        onSubmit: values => {
+            alert(JSON.stringify(values, null, 2));
+        },
+    });
+
+    const formikReset = useFormik({
+        enableReinitialize: true,
+        initialValues: {
+            password: "",
+            confPassword: "",
+        },
+        validationSchema: resetPassSchema,
         onSubmit: values => {
             alert(JSON.stringify(values, null, 2));
         },
@@ -237,9 +281,98 @@ export const AccountUpdate = () => {
                 Update
             </NButtonPrimary>
             <NButtonGrey
+                onClick={() => {
+                    setController(true);
+                }}
                 fullWidth>
                 Reset Password
             </NButtonGrey>
         </Box>
+        <Modal open={controller} onClose={() => {
+            setController(false)
+        }}>
+            <Stack sx={modal} spacing={1}>
+                <Typography variant={'h2'}>Reset Password</Typography>
+                <Typography>Note: You need to login again after you changed your pass</Typography>
+                <TextField
+                    required
+                    fullWidth
+                    label="Password"
+                    InputProps={{
+                        endAdornment: (
+                            <IconButton
+                                size="small"
+                                onClick={() => {
+                                    console.log("Toggle Show Pass");
+                                    let tempShow = {...show};
+                                    tempShow.pass = !show.pass;
+                                    setShow(tempShow);
+                                }}
+                            >
+                                {show.pass ? (
+                                    <VisibilityOffIcon color="error"/>
+                                ) : (
+                                    <VisibilityIcon/>
+                                )}
+                            </IconButton>
+                        ),
+                    }}
+                    id="password"
+                    type={show.pass === true ? "text" : "password"}
+                    value={formikReset.values.password}
+                    onChange={formikReset.handleChange}
+                    onBlur={formikReset.handleBlur}
+                    error={
+                        formikReset.errors.password !== undefined &&
+                        formikReset.touched.password
+                    }
+                    helperText={
+                        formikReset.errors.password && formikReset.touched.password
+                            ? formikReset.errors.password
+                            : null
+                    }
+                />
+                <TextField
+                    required
+                    fullWidth
+                    label="Confirm Password"
+                    InputProps={{
+                        endAdornment: (
+                            <IconButton
+                                size="small"
+                                onClick={() => {
+                                    console.log("Toggle Show Pass");
+                                    let tempShow = {...show};
+                                    tempShow.confPass = !show.confPass;
+                                    setShow(tempShow);
+                                }}
+                            >
+                                {show.confPass ? (
+                                    <VisibilityOffIcon color="error"/>
+                                ) : (
+                                    <VisibilityIcon/>
+                                )}
+                            </IconButton>
+                        ),
+                    }}
+                    id={'confPassword'}
+                    type={show.confPass === true ? "text" : "password"} value={formikReset.values.confPassword}
+                    onChange={formikReset.handleChange}
+                    onBlur={formikReset.handleBlur}
+                    error={
+                        formikReset.errors.confPassword !== undefined &&
+                        formikReset.touched.confPassword
+                    }
+                    helperText={
+                        formikReset.errors.confPassword && formikReset.touched.confPassword
+                            ? formikReset.errors.confPassword
+                            : null
+                    }
+                />
+                {modalError && <Typography color={'error'}>{modalError}</Typography>}
+                <NButtonPrimary type={'button'} onClick={resetPass}>Confirm</NButtonPrimary>
+                <NButtonGrey type={'button'} onClick={() => {setController(false)}}>Cancel</NButtonGrey>
+            </Stack>
+        </Modal>
     </Box>
 }

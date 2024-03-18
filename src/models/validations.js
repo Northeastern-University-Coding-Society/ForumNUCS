@@ -43,6 +43,16 @@ export const SignupSchema = Yup.object().shape({
         .max(50, "Your company is too long")
 });
 
+export const resetPassSchema = Yup.object().shape({
+    password: Yup.string()
+        .min(6, "Your password is too short")
+        .max(24, "Your password is too long")
+        .required("Required"),
+    confPassword: Yup.string()
+        .oneOf([Yup.ref("password")], "Your confirm password should match your password")
+        .required("Required"),
+})
+
 export const UpdateSchema = Yup.object().shape({
     first: Yup.string()
         .min(2, "Your name is too short")

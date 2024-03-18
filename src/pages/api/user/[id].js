@@ -105,18 +105,24 @@ export default async function handler(
                 });
             } else {
                 console.log(req.body.email, loginUser.email)
-                if (req.body.email !== loginUser.email) {
+                if (req.body.email && req.body.email !== loginUser.email) {
                     // user are changing email
                     // one more check
                     if (!await safetyCheck({
                         email: req.body.email,
                         username: 'abcd'
-                    })) return res.status(403).json({error: 'not available'});
+                    })) {
+                        return res.status(403).json({error: 'not available'});
+                    }
+                }
+                const safeBody = {...req.body}
+                if (req.body.password) {
+                    safeBody.password = generateMD5(req.body.password);
                 }
                 await user.updateOne({
                     username: loginUser.username
                 }, {
-                    $set: {...req.body}
+                    $set: {...safeBody}
                 });
             }
             break;
