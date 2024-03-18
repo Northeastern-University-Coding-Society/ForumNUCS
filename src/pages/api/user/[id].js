@@ -41,7 +41,7 @@ export default async function handler(
 
     await dbConnect();
 
-    const loginUser = session.user.email === process.env.ADMIN
+    const loginUser = session?.user?.email === process.env.ADMIN
         ? adminInfo :
         await user.findOne({email: session?.user?.email}).catch(() => {
             return null

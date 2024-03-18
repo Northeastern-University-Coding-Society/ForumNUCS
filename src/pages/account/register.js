@@ -84,6 +84,8 @@ const SignUp = () => {
                     setWaiting(false);
                     signIn('credentials', {
                         email: data.email, password: data.password
+                    }).then(() => {
+                        window.location.assign('/post/explore');
                     })
                 })
                 .catch((err) => {
