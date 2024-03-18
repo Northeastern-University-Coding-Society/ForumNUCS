@@ -32,22 +32,28 @@ export default async function handler(
                 return res.status(403).json({error: 'not available'});
             }
             if (loginUser.username === 'admin') {
-                const all = await post.find({}, {})
+                const all = await post.find({
+                    status: {$ne: 'deleted'}
+                }, {})
                 return res.status(200).json(all);
             }
             const all = await post.find({
-                authorId: loginUser.username
+                authorId: loginUser.username,
+                status: {$ne: 'deleted'}
             }, {})
             return res.status(200).json(all);
         } else {
             if (search) {
                 const regex = new RegExp(search, 'i');
                 const all = await post.find({
-                    [filter]: regex
+                    [filter]: regex,
+                    status: {$ne: 'deleted'}
                 }, {})
                 return res.status(200).json(all);
             } else {
-                const all = await post.find({}, {})
+                const all = await post.find({
+                    status: {$ne: 'deleted'}
+                }, {})
                 return res.status(200).json(all);
             }
         }

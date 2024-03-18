@@ -10,7 +10,9 @@ export default async function handler(
     const method = req.method;
     if (method === 'GET') {
         await dbConnect();
-        const all = await post.find({}, {})
+        const all = await post.find({
+            status: {$ne: 'deleted'}
+        }, {})
         return res.status(200).json(all);
     }
     res.status(500).send(MEG_NOT_SUPPORTED);

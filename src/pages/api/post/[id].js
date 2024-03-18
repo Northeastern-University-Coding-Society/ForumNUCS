@@ -21,7 +21,8 @@ export default async function handler(
         case 'GET':
             // no check
             const thePost = await post.findOne({
-                uuid: id
+                uuid: id,
+                status: {$ne: 'deleted'}
             });
             return res.status(200).json(thePost);
         case 'POST':
@@ -48,6 +49,23 @@ export default async function handler(
                 {$and: [{uuid: id}, {authorId: currentUser.username}]},
                 {...req.body}
             )
+            return res.status(200).json({});
+        case 'DELETE':
+            if (!session || !session.user || !session.user.email) {
+                return res.status(403).json({error: 'not available'});
+            }
+            if (session.user.email === process.env.ADMIN) {
+                await post.updateOne(
+                    {uuid: id},
+                    {status: 'deleted'}
+                )
+            } else {
+                const currentUser = await user.findOne({email: session.user.email});
+                await post.updateOne(
+                    {$and: [{uuid: id}, {authorId: currentUser.username}]},
+                    {status: 'deleted'}
+                )
+            }
             return res.status(200).json({});
         default:
             break;

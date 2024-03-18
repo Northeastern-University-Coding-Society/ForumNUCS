@@ -7,13 +7,22 @@ import {useSession} from "next-auth/react";
 import {useUser} from "@/helper/frontend/userProvider";
 import axios from "axios";
 import Box from "@mui/material/Box";
-import {Divider, Fab, Stack} from "@mui/material";
+import {Divider, Fab, IconButton, Modal, Stack} from "@mui/material";
 import {useRouter} from "next/router";
 import Button from "@mui/material/Button";
 import EditIcon from "@mui/icons-material/Edit";
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import GradeIcon from '@mui/icons-material/Grade';
 import {hasSession} from "@/helper/frontend/session-helper";
+import CommentIcon from '@mui/icons-material/Comment';
+import DeleteIcon from '@mui/icons-material/Delete';
+import {modal} from "@/commons/Styles";
+import TextField from "@mui/material/TextField";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import NButtonPrimary from "@/components/widgets/NButtonPrimary";
+import NButtonGrey from "@/components/widgets/NButtonGrey";
+import * as React from "react";
 
 const Viewer = () => {
 
@@ -31,13 +40,20 @@ const Viewer = () => {
     const [liked, setLiked] = useState(false)
     const [saved, setSaved] = useState(false)
 
+    const [controller, setController] = useState(false);
+
     useEffect(() => {
         if (id) {
             axios.get(`/api/post/${id}`)
                 .then(res => res.data)
                 .then((data) => {
-                    setContent(data);
-                    setMarkdown(data.content);
+                    if (data && data.uuid) {
+                        setContent(data);
+                        setMarkdown(data.content);
+                    } else {
+                        window.alert('deleted');
+                        window.location.assign('/post/explore')
+                    }
                 })
                 .catch((err) => {
                     console.error(err);
@@ -171,19 +187,54 @@ const Viewer = () => {
                     {
                         (content.author && content && user && content.authorId === user.username)
                         && (
-                            <Fab color={'secondary'} size={'large'}
-                                 aria-label="like"
-                                 onClick={() => {
-                                     window.location.assign(`/post/edit/${content.uuid}`)
-                                 }}
-                            >
-                                <EditIcon/>
-                            </Fab>
+                            <>
+                                <Fab color={'secondary'} size={'large'}
+                                     aria-label="like"
+                                     onClick={() => {
+                                         window.location.assign(`/post/edit/${content.uuid}`)
+                                     }}
+                                >
+                                    <EditIcon/>
+                                </Fab>
+                            </>
                         )
                     }
+                    {
+                        (user.username === 'admin' || (content.author && content && user && content.authorId === user.username))
+                        && <Fab color={'secondary'} size={'large'}
+                                aria-label="like"
+                                onClick={() => {
+                                    setController(true);
+                                }}
+                        >
+                            <DeleteIcon/>
+                        </Fab>
+                    }
+                    <Fab color={saved ? 'grey' : 'primary'} size={'large'}
+                         aria-label="like"
+                         onClick={save}
+                    >
+                        <CommentIcon/>
+                    </Fab>
                 </Stack>
             )
         }
+        <Modal open={controller}>
+            <Stack sx={modal} spacing={1}>
+                <Typography variant={'h2'}>Warning</Typography>
+                <Typography>Note: You cannot retrieve your post after deletion</Typography>
+                <NButtonPrimary type={'button'} onClick={() => {
+                    axios.delete(`/api/post/${id}`).then(() => {
+                        window.location.assign('/post/explore');
+                    }).catch(() => {
+                        window.alert('delete failed');
+                    })
+                }}>Confirm</NButtonPrimary>
+                <NButtonGrey type={'button'} onClick={() => {
+                    setController(false)
+                }}>Cancel</NButtonGrey>
+            </Stack>
+        </Modal>
     </Box>
 }
 

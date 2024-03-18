@@ -51,9 +51,14 @@ const Editor = () => {
                 .then(res => res.data)
                 .then((data) => {
                     // setContent(data);
-                    setMarkdown(data.content);
-                    setTitle(data.title);
-                    setTags(data.tags);
+                    if (data && data.uuid) {
+                        setMarkdown(data.content);
+                        setTitle(data.title);
+                        setTags(data.tags);
+                    } else {
+                        window.alert('deleted');
+                        window.location.assign('/post/explore')
+                    }
                 }).catch((err) => {
                 console.error(err);
             })

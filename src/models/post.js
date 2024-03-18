@@ -7,6 +7,7 @@ const PostSchema = new mongoose.Schema({
         title: String,
         content: String,
         date: String,
+        status: String,
         tags: {type: [String], required: false}
     }, {collection: "post"}
 )
