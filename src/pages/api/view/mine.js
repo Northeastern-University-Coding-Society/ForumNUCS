@@ -1,11 +1,9 @@
 import {MEG_NOT_SUPPORTED} from "@/commons/Constants";
 import view from "@/models/view";
 import dbConnect from "@/helper/backend/database";
-import {getServerSession} from "next-auth";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
-import post from "@/models/post";
 import user from "@/models/user";
-import save from "@/models/save";
+import {myServerSession} from "@/helper/backend/auth";
 
 export default async function handler(
     req, res
@@ -15,7 +13,7 @@ export default async function handler(
 
     await dbConnect();
 
-    const session = await getServerSession(req, res, authOptions);
+    const session = await myServerSession(req, res, authOptions);
 
     if (!session?.user?.email) {
         return res.status(403).json({error: 'not available'});

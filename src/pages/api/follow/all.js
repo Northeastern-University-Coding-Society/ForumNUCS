@@ -4,6 +4,7 @@ import dbConnect from "@/helper/backend/database";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
 import follow from "@/models/follow";
+import {myServerSession} from "@/helper/backend/auth";
 
 const crypto = require('crypto');
 
@@ -14,7 +15,7 @@ export default async function handler(
     const {id} = req.query;
     const method = req.method;
 
-    const session = await getServerSession(req, res, authOptions);
+    const session = await myServerSession(req, res, authOptions);
 
     if (!session || !session.user || !session.user.email) {
         return res.status(403).json({error: 'not available'});

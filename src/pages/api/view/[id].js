@@ -4,6 +4,7 @@ import dbConnect from "@/helper/backend/database";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
 import post from "@/models/post";
+import {myServerSession} from "@/helper/backend/auth";
 
 export default async function handler(
     req, res
@@ -13,7 +14,7 @@ export default async function handler(
 
     await dbConnect();
 
-    const session = await getServerSession(req, res, authOptions);
+    const session = await myServerSession(req, res, authOptions);
 
     switch (method) {
         case 'GET':

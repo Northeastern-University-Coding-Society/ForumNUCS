@@ -3,12 +3,13 @@ import {getServerSession} from "next-auth";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
 import dbConnect from "@/helper/backend/database";
 import user from "@/models/user";
+import {myServerSession} from "@/helper/backend/auth";
 
 export default async function handler(
     req, res
 ) {
     const method = req.method;
-    const session = await getServerSession(req, res, authOptions);
+    const session = await myServerSession(req, res, authOptions);
 
     await dbConnect();
 

@@ -3,6 +3,7 @@ import user from "@/models/user";
 import dbConnect from "@/helper/backend/database";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
+import {myServerSession} from "@/helper/backend/auth";
 
 const crypto = require('crypto');
 
@@ -19,7 +20,7 @@ export default async function handler(
 
     console.log('receiving request...', req.query, req.method, req.body);
 
-    const session = await getServerSession(req, res, authOptions);
+    const session = await myServerSession(req, res, authOptions);
 
     const safetyCheck = async (params) => {
         if (!params.email || !params.username) {

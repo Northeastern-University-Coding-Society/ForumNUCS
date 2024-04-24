@@ -5,6 +5,7 @@ import {authOptions} from "@/pages/api/auth/[...nextauth]";
 import user from "@/models/user";
 import save from "@/models/save";
 import view from "@/models/view";
+import {myServerSession} from "@/helper/backend/auth";
 
 export default async function handler(
     req, res
@@ -14,7 +15,7 @@ export default async function handler(
 
     await dbConnect();
 
-    const session = await getServerSession(req, res, authOptions);
+    const session = await myServerSession(req, res, authOptions);
 
     if (!session?.user?.email) {
         return res.status(403).json({error: 'not available'});

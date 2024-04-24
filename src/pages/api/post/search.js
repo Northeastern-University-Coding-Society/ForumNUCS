@@ -4,6 +4,7 @@ import dbConnect from "@/helper/backend/database";
 import user from "@/models/user";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
+import {corsMiddleware, myServerSession} from "@/helper/backend/auth";
 
 const adminInfo = {
     first: 'admin',
@@ -15,12 +16,13 @@ const adminInfo = {
 export default async function handler(
     req, res
 ) {
+    await corsMiddleware(req, res);
     const {filter, search} = req.query;
     const method = req.method;
     if (method === 'GET') {
         await dbConnect();
 
-        const session = await getServerSession(req, res, authOptions);
+        const session = await myServerSession(req, res, authOptions);
         const loginUser = session?.user?.email === process.env.ADMIN
             ? adminInfo :
             await user.findOne({email: session?.user?.email}).catch(() => {

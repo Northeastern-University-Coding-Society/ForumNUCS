@@ -1,14 +1,14 @@
 import {MEG_NOT_SUPPORTED} from "@/commons/Constants";
 import user from "@/models/user";
 import dbConnect from "@/helper/backend/database";
-import {getServerSession} from "next-auth";
-import {authOptions} from "@/pages/api/auth/[...nextauth]";
+import {corsMiddleware} from "@/helper/backend/auth";
 
 const crypto = require('crypto');
 
 export default async function handler(
     req, res
 ) {
+    await corsMiddleware(req, res);
     // return part of information, as this is author search
     const {id} = req.query;
     const method = req.method;

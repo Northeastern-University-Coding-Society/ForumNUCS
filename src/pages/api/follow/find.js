@@ -1,10 +1,12 @@
 import {MEG_NOT_SUPPORTED} from "@/commons/Constants";
 import dbConnect from "@/helper/backend/database";
 import follow from "@/models/follow";
+import {corsMiddleware} from "@/helper/backend/auth";
 
 export default async function handler(
     req, res
 ) {
+    await corsMiddleware(req, res);
     const method = req.method;
     if (method === 'POST') {
         await dbConnect();

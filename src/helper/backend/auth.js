@@ -1,3 +1,6 @@
+import {authOptions} from "@/pages/api/auth/[...nextauth]";
+import {checkAuth} from "@/helper/backend/user";
+import {getServerSession} from "next-auth";
 
 function initMiddleware(middleware) {
     return (req, res) => new Promise((resolve, reject) => {
@@ -32,3 +35,14 @@ export const corsMiddleware = initMiddleware(
 //     res.json({ message: 'Hello from your CORS-enabled API!' });
 // }
 
+export const myServerSession = async (req, res, authOptions) => {
+
+    await corsMiddleware(req, res);
+
+    const basicAuth = await checkAuth(req);
+    if (basicAuth) {
+        return {user: basicAuth};
+    } else {
+        return getServerSession(req, res, authOptions);
+    }
+}

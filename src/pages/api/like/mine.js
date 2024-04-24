@@ -6,6 +6,7 @@ import user from "@/models/user";
 import like from "@/models/like";
 import view from "@/models/view";
 import save from "@/models/save";
+import {myServerSession} from "@/helper/backend/auth";
 
 export default async function handler(
     req, res
@@ -15,7 +16,7 @@ export default async function handler(
 
     await dbConnect();
 
-    const session = await getServerSession(req, res, authOptions);
+    const session = await myServerSession(req, res, authOptions);
 
     if (!session?.user?.email) {
         return res.status(403).json({error: 'not available'});

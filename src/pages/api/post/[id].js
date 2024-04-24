@@ -4,6 +4,7 @@ import {getServerSession} from "next-auth";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
 import dbConnect from "@/helper/backend/database";
 import user from "@/models/user";
+import {myServerSession} from "@/helper/backend/auth";
 
 const crypto = require('crypto');
 
@@ -14,7 +15,7 @@ export default async function handler(
     // no check for user identity
     const method = req.method;
     const {id} = req.query;
-    const session = await getServerSession(req, res, authOptions);
+    const session = await myServerSession(req, res, authOptions);
     await dbConnect();
 
     switch (method) {

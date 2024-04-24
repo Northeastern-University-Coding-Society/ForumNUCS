@@ -1,12 +1,14 @@
 import post from "@/models/post";
 import {MEG_NOT_SUPPORTED} from "@/commons/Constants";
 import dbConnect from "@/helper/backend/database";
+import {corsMiddleware} from "@/helper/backend/auth";
 
 export default async function handler(
     req, res
 ) {
     // todo: guest is allowed, for now
     // no check for user identity
+    await corsMiddleware(req, res);
     const method = req.method;
     if (method === 'GET') {
         await dbConnect();
