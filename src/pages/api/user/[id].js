@@ -99,10 +99,14 @@ export default async function handler(
             }
             if (session.user.email === process.env.ADMIN) {
                 // admin update
+                const safeBody = {...req.body}
+                if (req.body.password) {
+                    safeBody.password = generateMD5(req.body.password);
+                }
                 await user.updateOne({
                     username: id
                 }, {
-                    $set: {...req.body}
+                    $set: {...safeBody}
                 });
             } else {
                 console.log(req.body.email, loginUser.email)
