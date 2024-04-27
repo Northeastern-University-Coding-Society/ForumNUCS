@@ -58,11 +58,22 @@ export default async function handler(
                     ]
                 });
             } else {
+                const temp = await user.findOne({
+                    username: id
+                }, {
+                    first: 1,
+                    last: 1,
+                })
+                if (!temp) {
+                    return res.status(200).json({
+                        
+                    });
+                }
                 // create
                 await follow.create({
                     follower: me.username,
                     followee: id,
-                    name: `${me.first} ${me.last}`,
+                    name: `${temp.first} ${temp.last}`,
                     date: new Date(Date.now())
                 });
             }
