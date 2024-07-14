@@ -7,9 +7,10 @@ import CssBaseline from "@mui/material/CssBaseline";
 // To fit in the Next.js new App router (actually not in use in this project)
 const App = ({children}) => {
     return <ThemeProvider theme={theme}>
-        <CssBaseline />
+        <CssBaseline/>
         {children}
     </ThemeProvider>
 }
 
+// export default trpc.withTRPC(App);
 export default App;

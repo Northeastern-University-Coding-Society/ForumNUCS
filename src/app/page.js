@@ -2,7 +2,8 @@
 
 import {Stack} from "@mui/material";
 import Typography from "@mui/material/Typography";
-import '../styles/font.css'
+import '../styles/font.css';
+import '../styles/main.css';
 import NSideLayout from "@/components/layout/NSideLayout";
 import Copyright from "@/components/widgets/Copyright";
 import Box from "@mui/material/Box";

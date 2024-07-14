@@ -1,6 +1,9 @@
+@import "../styles/main.css";
+
 @font-face {
     font-family: 'YourVariableFont';
     src: url('/fonts/TiltNeon-Regular-VariableFont_XROT,YROT.ttf') format('ttf-variations');
     font-weight: 100 900;
     font-style: normal;
 }
+

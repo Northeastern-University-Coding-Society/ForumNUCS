@@ -1,7 +1,8 @@
 import "./globals.css";
 import App from "@/components/App";
-import Copyright from "@/components/widgets/Copyright";
 import * as React from "react";
+import '../styles/font.css';
+import '../styles/main.css';
 
 export default function RootLayout({ children }) {
   return (
