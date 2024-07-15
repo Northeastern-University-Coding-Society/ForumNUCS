@@ -1,6 +1,9 @@
 // `pages/_app.js`
 import '../styles/main.css';
+import {trpc} from "@/utils/trpc";
 
-export default function App({ Component, pageProps }) {
+function App({ Component, pageProps }) {
     return <Component {...pageProps} />;
 }
+
+export default trpc.withTRPC(App);
